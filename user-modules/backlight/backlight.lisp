@@ -1,4 +1,6 @@
-(in-package :stumpwm)
+;;;; backlight.lisp
+
+(in-package #:backlight)
 
 (defvar *backlight-dir* "/sys/class/backlight/intel_backlight"
   "Directory for the backlight device")
@@ -35,7 +37,7 @@
 		  ((> brightness max) max)
 		  (t brightness)))
 	 (bstr (write-to-string b)))
-    (with-open-file (br brightness-file
+    (with-open-file (br *brightness-file*
 			:direction :output
 			:if-exists :overwrite)
       (write-string bstr br))))
@@ -59,9 +61,46 @@
 (defun dec-brightness-pct (pct)
   (dec-brightness (pct-to-val pct)))
 
-(set-brightness 100)
-(inc-brightness 50)
-(dec-brightness 50)
-(get-brightness-pct)
-(inc-brightness-pct 10)
-(set-brightness-pct 5)
+(defun brightness-pct-formatter (ml)
+  (declare (ignore ml))
+  (format nil "~a%" (get-brightness-pct)))
+
+(add-screen-mode-line-formatter #\b #'brightness-pct-formatter)
+
+(defcommand brightness-current (pct) ((:y-or-n "Return as percent? "))
+  (if pct
+      (message "~a%" (get-brightness-pct))
+      (message "~a" (get-current-brightness))))
+
+(defcommand brightness-set (val pct) ((:number "Enter brightness value: ")
+				      (:y-or-n "Interpret as percent? "))
+  (if pct
+      (set-brightness-pct val)
+      (set-brightness val)))
+
+(defcommand brightness-inc (val pct) ((:number "Enter brightness value: ")
+				      (:y-or-n "Interpret as percent? "))
+  (if pct
+      (inc-brightness-pct val)
+      (inc-brightness val)))
+
+(defcommand brightness-dec (val pct) ((:number "Enter brightness value: ")
+				      (:y-or-n "Interpret as percent? "))
+  (if pct
+      (dec-brightness-pct val)
+      (dec-brightness val)))
+
+(define-key *top-map* (kbd "XF86MonBrightnessUp") "brightness-inc 5 y")
+(define-key *top-map* (kbd "M-XF86MonBrightnessUp") "brightness-inc 10 y")
+(define-key *top-map* (kbd "XF86MonBrightnessDown") "brightness-dec 5 y")
+(define-key *top-map* (kbd "M-XF86MonBrightnessDown") "brightness-dec 10 y")
+
+(export '(get-current-brightness
+	  get-max-brightness
+	  get-brightness-pct
+	  set-brightness
+	  set-brightness-pct
+	  inc-brightness
+	  inc-brightness-pct
+	  dec-brightness
+	  dec-brightness-pct))

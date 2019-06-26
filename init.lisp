@@ -3,12 +3,19 @@
 
 (in-package :stumpwm)
 
-(defvar *config-dir* "/home/evan/.stumpwm.d/" "StumpWM configuration directory")
+(defvar *config-dir* (make-pathname :directory '(:absolute "home" "evan")
+				    :name ".stumpwm.d"))
 
-(defun load-user-module (name)
-  (load (make-pathname :defaults *config-dir*
-		       :name name
-		       :type "lisp")))
+(defvar *modules-dir* (make-pathname :directory '(:absolute "home" "evan" ".stumpwm.d")
+				     :name "modules")
+  "StumpWM official modules directory")
+(defvar *user-modules-dir* (make-pathname :directory '(:absolute "home" "evan" ".stumpwm.d")
+					  :name "user-modules")
+  "User modules directory")
+
+(init-load-path *config-dir*)
+
+(load-module "backlight")
 
 (run-commands "exec /home/evan/bin/ctrlcapson")
 (run-commands "exec /home/evan/bin/touchpad.sh")
@@ -20,7 +27,7 @@
 (setf *mouse-focus-policy* :click)
 
 (setf stumpwm:*screen-mode-line-format*
-      (list "%W | "
+      (list "%W | %b | "
 	    '(:eval (stumpwm:run-shell-command "date '+%a %b %d %H:%M %Z %Y'" t))))
 
 (setf stumpwm:*mode-line-timeout* 10)
