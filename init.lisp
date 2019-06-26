@@ -1,5 +1,7 @@
 (load "/home/evan/quicklisp/setup.lisp")
 (ql:quickload :swank)
+(ql:quickload :xembed)
+(ql:quickload :zpng)
 
 (in-package :stumpwm)
 
@@ -17,6 +19,15 @@
 
 (load-module "backlight")
 
+(load-module "stumptray")
+(stumptray:stumptray)
+
+(load-module "cpu")
+(load-module "mem")
+(load-module "battery-portable")
+
+(load-module "screenshot")
+
 (run-commands "exec /home/evan/bin/ctrlcapson")
 (run-commands "exec /home/evan/bin/touchpad.sh")
 (run-commands "exec synapse -s")
@@ -27,10 +38,12 @@
 (setf *mouse-focus-policy* :click)
 
 (setf stumpwm:*screen-mode-line-format*
-      (list "%W | %b | "
+      (list "%W"
+	    '(:eval (stumpwm:run-shell-command "echo" t))
+	    "| BRT: %b | %C | %M | BAT: %B | "
 	    '(:eval (stumpwm:run-shell-command "date '+%a %b %d %H:%M %Z %Y'" t))))
 
-(setf stumpwm:*mode-line-timeout* 10)
+(setf stumpwm:*mode-line-timeout* 2)
 
 (stumpwm:toggle-mode-line (stumpwm:current-screen)
 			  (stumpwm:current-head))
