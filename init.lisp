@@ -15,12 +15,13 @@
 					  :name "user-modules")
   "User modules directory")
 
-(init-load-path *config-dir*)
+(defvar *module-paths* (init-load-path *modules-dir*))
+(defvar *user-module-paths* (init-load-path *user-modules-dir*))
+
+(map nil #'add-to-load-path *module-paths*)
+(map nil #'add-to-load-path *user-module-paths*)
 
 (load-module "backlight")
-
-(load-module "stumptray")
-(stumptray:stumptray)
 
 (load-module "cpu")
 (load-module "mem")
@@ -48,6 +49,9 @@
 (stumpwm:toggle-mode-line (stumpwm:current-screen)
 			  (stumpwm:current-head))
 
+(load-module "stumptray")
+(stumptray:stumptray)
+
 (swank-loader:init)
 (defcommand swank () ()
 	    (swank:create-server :port 4005
@@ -56,6 +60,6 @@
 	    (echo-string
 	     (current-screen)
 	     "Starting swank. M-x slime-connect RET RET, then (in-package stumpwm)."))
-(swank)
+(define-key *root-map* (kbd "C-s") "swank")
 
 
