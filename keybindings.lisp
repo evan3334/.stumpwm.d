@@ -15,6 +15,5 @@
 (defcommand rofi () ()
   (run-commands "exec rofi -show drun"))
 
-
 (define-key *root-map* (kbd "C-s") "swank")
 (define-key *top-map* (kbd "C-S-SPC") "rofi")

@@ -1,8 +1,14 @@
+;; --------------------
+;; Load Libraries
+;; --------------------
+
 (load "/home/evan/quicklisp/setup.lisp")
-(ql:quickload :xembed)
-(ql:quickload :zpng)
 
 (in-package :stumpwm)
+
+;; --------------------
+;; Setup directory variables
+;; --------------------
 
 (defvar *config-dir* '(:absolute "home" "evan" ".stumpwm.d"))
 
@@ -17,43 +23,42 @@
 (defvar *module-paths* (init-load-path *modules-dir*))
 (defvar *user-module-paths* (init-load-path *user-modules-dir*))
 
-(defun load-local-file (name)
-    (load (make-pathname :directory *config-dir*
-			 :name name
-			 :type "lisp")))
+;; --------------------
+;; Build module load paths
+;; --------------------
 
 (map nil #'add-to-load-path *module-paths*)
 (map nil #'add-to-load-path *user-module-paths*)
 
-(load-module "backlight")
+;; --------------------
+;; Setup config selection and local file loading
+;; --------------------
 
-(load-module "cpu")
-(load-module "mem")
-(load-module "battery-portable")
+(defvar *selected-config* :none
+  "Selected configuration, used for machine-specific config such as startup programs")
 
-(load-module "screenshot")
+(defun load-select-config ()
+  (let* ((pathname (make-local-pathname "select-config"))
+	 (file-path (probe-file pathname)))
+    (if file-path
+	(load file-path))))
 
-(run-commands "exec /home/evan/bin/ctrlcapson")
-(run-commands "exec /home/evan/bin/touchpad.sh")
-;;(run-commands "exec synapse -s")
-(run-commands "exec /home/evan/Telegram/Telegram")
-(run-commands "exec keepassxc")
-(run-commands "exec xterm")
+(defun make-local-pathname (name)
+  (make-pathname :directory *config-dir*
+		 :name name
+		 :type "lisp"))
 
-(setf *mouse-focus-policy* :click)
+(defun load-local-file (name)
+  (load (make-local-pathname name)))
 
-(setf stumpwm:*screen-mode-line-format*
-      (list "%W"
-	    '(:eval (stumpwm:run-shell-command "echo" t))
-	    "| BRT: %b | %C | %M | BAT: %B | "
-	    '(:eval (stumpwm:run-shell-command "date '+%a %b %d %H:%M %Z %Y'" t))))
+(load-select-config)
 
-(setf stumpwm:*mode-line-timeout* 2)
+;; --------------------
+;; Load configuration
+;; --------------------
 
-(stumpwm:toggle-mode-line (stumpwm:current-screen)
-			  (stumpwm:current-head))
+(load-local-file "config-common")
 
-(load-module "stumptray")
-(stumptray:stumptray)
-
-(load-local-file "keybindings")
+(cond
+  ((eq *selected-config* :desktop) (load-local-file "config-desktop"))
+  ((eq *selected-config* :laptop) (load-local-file "config-laptop")))
