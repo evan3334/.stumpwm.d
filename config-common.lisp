@@ -14,6 +14,7 @@
 (load-module "cpu")
 (load-module "mem")
 (load-module "screenshot")
+(load-module "volume")
 
 ;; --------------------
 ;; Startup programs
