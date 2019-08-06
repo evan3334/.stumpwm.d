@@ -15,6 +15,7 @@
 (load-module "mem")
 (load-module "screenshot")
 (load-module "volume")
+(load-module "rhythmbox")
 
 ;; --------------------
 ;; Startup programs
@@ -36,8 +37,8 @@
 ;; --------------------
 
 (let ((status-format (if (eq *selected-config* :laptop)
-			 "| BRT: %b | %C | %M | BAT: %B | "
-			 "| %C | %M | ")))
+			 "| BRT: %b | %C | %M | BAT: %B | %p | "
+			 "| %C | %M | %p | ")))
   (setf stumpwm:*screen-mode-line-format*
 	(list "[%n] %W"
 	      '(:eval (stumpwm:run-shell-command "echo" t))
