@@ -62,6 +62,7 @@
 ;; Load keybindings
 ;; --------------------
 
+(load-local-file "misc-commands")
 (load-local-file "keybindings")
 
 
