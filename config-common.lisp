@@ -16,6 +16,7 @@
 (load-module "screenshot")
 (load-module "volume")
 (load-module "rhythmbox")
+(load-module "mpd")
 
 ;; --------------------
 ;; Startup programs
@@ -35,10 +36,13 @@
 ;; --------------------
 ;; Set up mode line
 ;; --------------------
+(print "loading mode line")
+
+(setf mpd:*mpd-current-song-fmt* "%a - %t (%e/%l)")
 
 (let ((status-format (if (eq *selected-config* :laptop)
-			 "| BRT: %b | %C | %M | BAT: %B | %p | "
-			 "| %C | %M | %p | ")))
+			 "| BRT: %b | %C | %M | BAT: %B | %m | VOL: %V |"
+			 "| %C | %M | %m | VOL: %V |")))
   (setf stumpwm:*screen-mode-line-format*
 	(list "[%n] %W"
 	      '(:eval (stumpwm:run-shell-command "echo" t))
@@ -49,7 +53,7 @@
 
 (stumpwm:toggle-mode-line (stumpwm:current-screen)
 			  (stumpwm:current-head))
-
+(print "mode line loaded")
 ;; --------------------
 ;; Load stumptray
 ;; (done later because it needs the mode line to be set up first)
