@@ -12,6 +12,9 @@
 	     (current-screen)
 	     "Starting swank. M-x slime-connect RET RET, then (in-package stumpwm)."))
 
+(define-key *root-map* (kbd "C-c") "exec urxvt")
+(define-key *root-map* (kbd "c") "exec urxvt")
 (define-key *root-map* (kbd "C-s") "swank")
-(define-key *top-map* (kbd "C-S-SPC") "rofi")
+(define-key *top-map* (kbd "s-SPC") "rofi")
 (define-key *top-map* (kbd "Print") "activate-flameshot")
+(define-key *top-map* (kbd "s-l") "xscreensaver-lock")

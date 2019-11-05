@@ -37,12 +37,6 @@
 (defvar *selected-config* :none
   "Selected configuration, used for machine-specific config such as startup programs")
 
-(defun load-select-config ()
-  (let* ((pathname (make-local-pathname "select-config"))
-	 (file-path (probe-file pathname)))
-    (if file-path
-	(load file-path))))
-
 (defun make-local-pathname (name)
   (make-pathname :directory *config-dir*
 		 :name name
@@ -51,7 +45,32 @@
 (defun load-local-file (name)
   (load (make-local-pathname name)))
 
+(defun load-select-config ()
+  (let* ((pathname (make-local-pathname "select-config"))
+	 (file-path (probe-file pathname)))
+    (if file-path
+	(load file-path))))
+
 (load-select-config)
+
+;; --------------------
+;; Set up shell for running shell commands
+;; --------------------
+(defparameter *async-shell*
+  (uiop:launch-program "bash" :input :stream :output :stream))
+
+(defun async-run (command)
+  (write-line command (uiop:process-info-input *async-shell*))
+  (force-output (uiop:process-info-input *async-shell*))
+  (let* ((output-string (read-line (uiop:process-info-output *async-shell*)))
+         (stream (uiop:process-info-output *async-shell*)))
+    (if (listen stream)
+        (loop while (listen stream)
+           do (setf output-string (concatenate 'string
+                                               output-string
+                                               '(#\Newline)
+                                               (read-line stream)))))
+    output-string))
 
 ;; --------------------
 ;; Load configuration

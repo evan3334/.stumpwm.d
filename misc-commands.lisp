@@ -8,3 +8,6 @@
 
 (defcommand rofi () ()
   (run-commands "exec rofi -show drun"))
+
+(defcommand xscreensaver-lock () ()
+  (stumpwm:run-shell-command "xscreensaver-command --lock"))

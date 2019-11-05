@@ -4,8 +4,16 @@
 
 (ql:quickload :xembed)
 (ql:quickload :zpng)
+(ql:quickload :clx-truetype)
 
 (in-package :stumpwm)
+
+;; --------------------
+;; Set up fonts early
+;; --------------------
+
+(clx-truetype:cache-fonts)
+
 
 ;; --------------------
 ;; Load modules
@@ -13,19 +21,19 @@
 
 (load-module "cpu")
 (load-module "mem")
-(load-module "screenshot")
-(load-module "volume")
-(load-module "rhythmbox")
 (load-module "mpd")
+(load-module "ttf-fonts")
+(load-module "volume")
+;;(load-module "rhythmbox")
 
 ;; --------------------
 ;; Startup programs
 ;; --------------------
 
-(run-commands "exec /home/evan/bin/ctrlcapson")
-(run-commands "exec /home/evan/Telegram/Telegram")
-(run-commands "exec keepassxc")
-(run-commands "exec xterm")
+(run-shell-command "/home/evan/bin/ctrlcapson")
+(run-shell-command "/home/evan/Telegram/Telegram")
+(run-shell-command "keepassxc")
+(run-shell-command "urxvt")
 
 ;; --------------------
 ;; Set mouse focus policy
@@ -39,18 +47,18 @@
 (print "loading mode line")
 
 (setf mpd:*mpd-current-song-fmt* "%a - %t (%e/%l)")
+(setf mpd:*mpd-status-fmt* "")
 
 (let ((status-format (if (eq *selected-config* :laptop)
-			 "| BRT: %b | %C | %M | BAT: %B | %m | VOL: %V |"
-			 "| %C | %M | %m | VOL: %V |")))
+			 "| BRT: %b | %C | %M | BAT: %B | %m | VOL: %V | "
+			 "| %C | %M | %m | VOL: %V | "))
+      (newline (format nil "~%")))
   (setf stumpwm:*screen-mode-line-format*
 	(list "[%n] %W"
-	      '(:eval (stumpwm:run-shell-command "echo" t))
+	      newline
 	      status-format
-	      '(:eval (stumpwm:run-shell-command "date '+%a %b %d %H:%M %Z %Y'" t)))))
-
+	      '(:eval (async-run "date '+%a %b %d %H:%M %Z %Y'")))))
 (setf stumpwm:*mode-line-timeout* 2)
-
 (stumpwm:toggle-mode-line (stumpwm:current-screen)
 			  (stumpwm:current-head))
 (print "mode line loaded")
@@ -59,8 +67,8 @@
 ;; (done later because it needs the mode line to be set up first)
 ;; --------------------
 
-(load-module "stumptray")
-(stumptray:stumptray)
+;;(load-module "stumptray")
+;;(stumptray:stumptray)
 
 ;; --------------------
 ;; Load keybindings
@@ -68,5 +76,5 @@
 
 (load-local-file "misc-commands")
 (load-local-file "keybindings")
-
+(load-local-file "mpd")
 

@@ -24,7 +24,7 @@
   "An alist of all supported format options for Rhythmbox 'Now Playing' information.")
 
 (defvar *rhythmbox-client-command*
-  "rhythmbox-client --no-start --print-playing-format \"~a\""
+  "rhythmbox-client --check-running --no-start --print-playing-format \"~a\""
   "The command to run rhythmbox-client, as a format string.")
 
 (defvar *now-playing-format* '(track-artist " - " track-title
@@ -43,13 +43,11 @@
        (resolve-format-inner
 	(format nil "~a~a" format-str (cdr (assoc (car format-list) *now-playing-opts*)))
 	(cdr format-list)))
-      (else
+      (T
        (resolve-format-inner
 	(format nil "~a~a" format-str (car format-list))
 	(cdr format-list)))))
   (resolve-format-inner "" format-list))
-
-(resolve-format *now-playing-format*)
 
 (defun get-now-playing ()
   (string-right-trim '(#\Newline #\Linefeed #\Return)
