@@ -12,8 +12,9 @@
 ;; Set up fonts early
 ;; --------------------
 
+(load-module "ttf-fonts")
 (clx-truetype:cache-fonts)
-
+(set-font (make-instance 'xft:font :family "Unifont" :subfamily "Medium" :size 13))
 
 ;; --------------------
 ;; Load modules
@@ -22,7 +23,6 @@
 (load-module "cpu")
 (load-module "mem")
 (load-module "mpd")
-(load-module "ttf-fonts")
 (load-module "volume")
 ;;(load-module "rhythmbox")
 
