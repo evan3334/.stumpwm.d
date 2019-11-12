@@ -35,7 +35,8 @@
 
 (defvar *volume-scanner*
   (ppcre:create-scanner
-   "\\*\\sindex:.*[\\s\\S]*v.*:\\sf.*\\s([0-9]{1,3})%.*\\s([0-9]{1,3})%"
+   ;;"\\* index:.*[\\s\\S]*v.*:\\sf.*\\s([0-9]{1,3})%.*\\s([0-9]{1,3})%"
+   "\\* index:(?:.*[\\S\\s]{2}){1,10}.*\\s(\\d{1,3})%.*\\s(\\d{1,3})%"
    :multi-line-mode t))
 
 (defun parse-volume (str)
