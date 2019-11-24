@@ -18,3 +18,5 @@
 (define-key *top-map* (kbd "s-SPC") "rofi")
 (define-key *top-map* (kbd "Print") "activate-flameshot")
 (define-key *top-map* (kbd "s-l") "xscreensaver-lock")
+(define-key *root-map* (kbd "XF86AudioMute") "toggle-mic-feedback")
+(define-key *root-map* (kbd "Pause") "suspend")
