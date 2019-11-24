@@ -5,6 +5,8 @@
 (load "/home/evan/quicklisp/setup.lisp")
 
 (in-package :stumpwm)
+(setf *debug-level* 1)
+(redirect-all-output "/tmp/stumpwm-log.txt")
 
 ;; --------------------
 ;; Setup directory variables
