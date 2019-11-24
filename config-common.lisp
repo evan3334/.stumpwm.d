@@ -34,6 +34,7 @@
 (run-shell-command "/home/evan/Telegram/Telegram")
 (run-shell-command "keepassxc")
 (run-shell-command "urxvt")
+(run-shell-command "compton")
 
 ;; --------------------
 ;; Set mouse focus policy
@@ -50,14 +51,14 @@
 (setf mpd:*mpd-status-fmt* "")
 
 (let ((status-format (if (eq *selected-config* :laptop)
-			 "| BRT: %b | %C | %M | BAT: %B | %m | VOL: %V | "
+			 "| %C | %M | BAT: %B | %m | VOL: %V | BRT: %b | "
 			 "| %C | %M | %m | VOL: %V | "))
       (newline (format nil "~%")))
   (setf stumpwm:*screen-mode-line-format*
 	(list "[%n] %W"
 	      newline
 	      status-format
-	      '(:eval (async-run "date '+%a %b %d %H:%M %Z %Y'")))))
+	      '(:eval (async-run "date '+%a %b %d %Y %l:%M %p %Z'")))))
 (setf stumpwm:*mode-line-timeout* 2)
 (stumpwm:toggle-mode-line (stumpwm:current-screen)
 			  (stumpwm:current-head))
@@ -77,4 +78,3 @@
 (load-local-file "misc-commands")
 (load-local-file "keybindings")
 (load-local-file "mpd")
-
